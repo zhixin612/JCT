@@ -1,3 +1,6 @@
 [submodule "vllms"]
 	path = vllms
 	url = https://github.com/zhixin612/vllm
+[submodule "workload/trace/BurstGPT"]
+	path = workload/trace/BurstGPT
+	url = https://github.com/HPMLL/BurstGPT

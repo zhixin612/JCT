@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 def load_input(dataset) -> Dataset:
     ds = None
     if dataset.lower() == 'mmlu':           # cais/mmlu (QA)
+        # avg input = 323.5, avg output = 1.0
         # https://huggingface.co/datasets/cais/mmlu
         # Dataset({features: ['question', 'subject', 'choices', 'answer'], num_rows: 99842})
         ds = load_dataset("cais/mmlu", "all")['auxiliary_train']    # abstract_algebra, college_computer_science, ...
@@ -22,6 +23,7 @@ def load_input(dataset) -> Dataset:
         })
 
     if dataset.lower() == 'dolly':          # databricks/databricks-dolly-15k (QA)
+        # avg input = 80, avg output = 69
         # https://huggingface.co/datasets/databricks/databricks-dolly-15k
         # Dataset({features: ['instruction', 'context', 'response', 'category'], num_rows: 15011})
         ds = load_dataset("databricks/databricks-dolly-15k")['train']
@@ -31,6 +33,7 @@ def load_input(dataset) -> Dataset:
         })
 
     if dataset.lower() == 'alpaca':         # tatsu-lab/alpaca (QA)
+        # avg input = 117, avg output = 51
         # https://huggingface.co/datasets/tatsu-lab/alpaca
         # Dataset({features: ['instruction', 'input', 'output', 'text'], num_rows: 52002})
         ds = load_dataset("tatsu-lab/alpaca")['train']
@@ -40,6 +43,7 @@ def load_input(dataset) -> Dataset:
         })
 
     if dataset.lower() == 'alpaca_python':  # iamtarun/python_code_instructions_18k_alpaca  (code generation)
+        # avg input = 188, avg output = 99
         # https://huggingface.co/datasets/iamtarun/python_code_instructions_18k_alpaca
         # Dataset({features: ['instruction', 'input', 'output', 'prompt'], num_rows: 18612})
         ds = load_dataset("iamtarun/python_code_instructions_18k_alpaca")['train']
@@ -49,6 +53,7 @@ def load_input(dataset) -> Dataset:
         })
 
     if dataset.lower() == 'dialogsum':      # knkarthick/dialogsum (dialogue summarization)
+        # avg input = 193, avg output = 31
         # https://huggingface.co/datasets/knkarthick/dialogsum
         # train: Dataset({features: ['id', 'dialogue', 'summary', 'topic'], num_rows: 12460})
         ds = load_dataset("knkarthick/dialogsum")['train']
@@ -116,7 +121,7 @@ def gen_workload(dataset, trace, max_request=None, rate_scale=1.0):  # generator
         ddl += gap / rate_scale / 1000
         if max_request and cnt >= max_request:
             break
-        time.sleep(ddl - time.time())
+        time.sleep(max(0, ddl - time.time()))
     logging.info(f"Workload generation for dataset {dataset} and trace {trace} completed")
 
 
@@ -125,10 +130,10 @@ if __name__ == '__main__':
     # for name in trace_names:
     #     load_trace(name)
 
-    # dataset_names = ['mmlu', 'dolly', 'alpaca', 'alpaca_python', 'dialogsum', 'openorca']
-    # for name in dataset_names:
-    #     _ds = load_input(name)
-    #     print(_ds, type(_ds))
+    dataset_names = ['mmlu', 'dolly', 'alpaca', 'alpaca_python', 'dialogsum', 'openorca']
+    for name in dataset_names:
+        _ds = load_input(name)
+        print(_ds, type(_ds))
 
-    for p in gen_workload('alpaca_python', 'wiki', 100, 0.01):
-        print(p['input'])
+    # for p in gen_workload('alpaca_python', 'wiki', 100, 0.01):
+    #     print(p['input'])

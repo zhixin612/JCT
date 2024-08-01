@@ -44,6 +44,7 @@ def describe_dataset():
             plt.savefig('fig/token_count_{}_{}_log.pdf'.format(dataset, t))
 
             print('Token count distribution for {} ({}) saved'.format(t, dataset))
+            print('Mean token count for {} ({}) is {}'.format(t, dataset, np.mean(token_counts)))
 
 
 def describe_trace():
@@ -83,7 +84,7 @@ def describe_trace():
 
 
 if __name__ == '__main__':
-    # describe_dataset()
-    describe_trace()
+    describe_dataset()
+    # describe_trace()
 
 
